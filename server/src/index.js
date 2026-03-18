@@ -1,8 +1,9 @@
 import 'dotenv/config';
 import express from 'express';
+import dotenv from 'dotenv';
 import cors from 'cors';
 import { createClient } from '@supabase/supabase-js';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import fetch from 'node-fetch';
 
 const app = express();
 
@@ -16,8 +17,6 @@ const supabase = createClient(
   process.env.SUPABASE_URL ?? '',
   process.env.SUPABASE_ANON_KEY ?? ''
 );
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '');
 
 // Authentication middleware
 const authenticateUser = async (req, res, next) => {
@@ -47,7 +46,7 @@ app.get('/api/health', (_req, res) => {
 });
 
 app.get('/api/env-check', (_req, res) => {
-  const missing = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'GEMINI_API_KEY'].filter(
+  const missing = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'OPENROUTER_API_KEY'].filter(
     (k) => !process.env[k]
   );
   res.json({ ok: missing.length === 0, missing });
@@ -55,8 +54,8 @@ app.get('/api/env-check', (_req, res) => {
 
 app.post('/api/ai/recommendations', async (req, res) => {
   try {
-    if (!process.env.GEMINI_API_KEY) {
-      return res.status(400).json({ error: 'Missing GEMINI_API_KEY in server/.env' });
+    if (!process.env.OPENROUTER_API_KEY) {
+      return res.status(400).json({ error: 'Missing OPENROUTER_API_KEY in server/.env' });
     }
 
     const { prompt } = req.body ?? {};
@@ -64,20 +63,31 @@ app.post('/api/ai/recommendations', async (req, res) => {
       return res.status(400).json({ error: 'Body must include { prompt: string }' });
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
+    const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'google/gemma-3-4b-it:free',
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const aiResult = await aiResponse.json();
+    console.log('OpenRouter response:', JSON.stringify(aiResult));
+    const text = aiResult.choices[0].message.content;
 
     res.json({ text });
   } catch (err) {
-    res.status(500).json({ error: 'Gemini request failed', details: String(err) });
+    res.status(500).json({ error: 'AI request failed', details: String(err) });
   }
 });
 
 app.post('/api/recommendations', async (req, res) => {
   try {
-    if (!process.env.GEMINI_API_KEY) {
-      return res.status(400).json({ error: 'Missing GEMINI_API_KEY in server/.env' });
+    if (!process.env.OPENROUTER_API_KEY) {
+      return res.status(400).json({ error: 'Missing OPENROUTER_API_KEY in server/.env' });
     }
 
     const filters = req.body;
@@ -113,9 +123,20 @@ app.post('/api/recommendations', async (req, res) => {
 Format exactly like this:
 [{"title":"Book Title","author":"Author Name","genre":"Genre","pages":"~300 pages","reason":"Two sentence explanation of why this fits their preferences perfectly."}]`;
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
+    const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'google/gemma-3-4b-it:free',
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const aiResult = await aiResponse.json();
+    console.log('OpenRouter response:', JSON.stringify(aiResult));
+    const text = aiResult.choices[0].message.content;
 
     // Parse JSON response
     let recommendations;
@@ -124,7 +145,7 @@ Format exactly like this:
       const cleanText = text.replace(/```json|```/g, '').trim();
       recommendations = JSON.parse(cleanText);
     } catch (parseError) {
-      console.error('Failed to parse Gemini response:', text);
+      console.error('Failed to parse AI response:', text);
       return res.status(500).json({
         error: 'Failed to parse recommendations',
         details: 'Invalid JSON response from AI'
@@ -140,8 +161,8 @@ Format exactly like this:
 
 app.post('/api/recommendations/auth', authenticateUser, async (req, res) => {
   try {
-    if (!process.env.GEMINI_API_KEY) {
-      return res.status(400).json({ error: 'Missing GEMINI_API_KEY in server/.env' });
+    if (!process.env.OPENROUTER_API_KEY) {
+      return res.status(400).json({ error: 'Missing OPENROUTER_API_KEY in server/.env' });
     }
 
     if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
@@ -212,9 +233,20 @@ app.post('/api/recommendations/auth', authenticateUser, async (req, res) => {
       }
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
+    const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'google/gemma-3-4b-it:free',
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const aiResult = await aiResponse.json();
+    console.log('OpenRouter response:', JSON.stringify(aiResult));
+    const text = aiResult.choices[0].message.content;
 
     // Parse JSON response
     let recommendations;
@@ -223,7 +255,7 @@ app.post('/api/recommendations/auth', authenticateUser, async (req, res) => {
       const cleanText = text.replace(/```json\n?|\n?```/g, '').trim();
       recommendations = JSON.parse(cleanText);
     } catch (parseError) {
-      console.error('Failed to parse Gemini response:', text);
+      console.error('Failed to parse AI response:', text);
       return res.status(500).json({
         error: 'Failed to parse recommendations',
         details: 'Invalid JSON response from AI'

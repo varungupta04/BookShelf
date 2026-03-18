@@ -1,1 +1,5 @@
 node_modules
+server/.env
+client/.env
+OPENROUTER_API_KEY="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"
+
