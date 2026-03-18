@@ -47,7 +47,7 @@ export function MyShelf() {
 
     setSearchLoading(true);
     try {
-      const API_KEY = 'AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFmBWY';
+      const API_KEY = 'AIzaSyB4Gf99iX1A-CW36ERsSCrvm0PGbeKILFg';
       const response = await fetch(
         `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&orderBy=relevance&printType=books&langRestrict=en&maxResults=20&key=${API_KEY}`
       );
@@ -55,15 +55,14 @@ export function MyShelf() {
 
       if (data.items) {
         // Step 1: Hard filter
-        let filteredBooks = (data.items || []).filter(item => {
+        let filteredBooks = data.items || [];
+        filteredBooks = filteredBooks.filter(item => {
           const v = item.volumeInfo;
-          if (!v.title) return false;
-          if (!v.authors || v.authors.length === 0) return false;
-          return true;
+          return v && v.title && v.authors && v.authors.length > 0;
         });
 
-        if (filteredBooks.length < 3) {
-          filteredBooks = data.items.filter(item => item.volumeInfo?.title);
+        if (filteredBooks.length === 0) {
+          filteredBooks = data.items || [];
         }
 
 
