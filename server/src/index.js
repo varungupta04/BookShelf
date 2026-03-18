@@ -64,7 +64,7 @@ app.post('/api/ai/recommendations', async (req, res) => {
       return res.status(400).json({ error: 'Body must include { prompt: string }' });
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
     const result = await model.generateContent(prompt);
     const text = result.response.text();
 
@@ -113,7 +113,7 @@ app.post('/api/recommendations', async (req, res) => {
 Format exactly like this:
 [{"title":"Book Title","author":"Author Name","genre":"Genre","pages":"~300 pages","reason":"Two sentence explanation of why this fits their preferences perfectly."}]`;
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
     const result = await model.generateContent(prompt);
     const text = result.response.text();
 
@@ -212,7 +212,7 @@ app.post('/api/recommendations/auth', authenticateUser, async (req, res) => {
       }
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
     const result = await model.generateContent(prompt);
     const text = result.response.text();
 

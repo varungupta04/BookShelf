@@ -55,23 +55,17 @@ export function MyShelf() {
 
       if (data.items) {
         // Step 1: Hard filter
-        let filteredBooks = data.items.filter(item => {
-          const volumeInfo = item.volumeInfo;
-
-          // Remove books without essential info
-          if (!volumeInfo.imageLinks?.thumbnail) return false;
-          if (!volumeInfo.authors || volumeInfo.authors.length === 0) return false;
-          if (!volumeInfo.description) return false;
-          if (volumeInfo.pageCount && volumeInfo.pageCount < 10) return false;
-          if (volumeInfo.language && volumeInfo.language !== 'en') return false;
-
-          // Remove journals, reports, workbooks
-          const title = (volumeInfo.title || '').toLowerCase();
-          const forbiddenWords = ['journal', 'report', 'workbook', 'annual report', 'proceedings'];
-          if (forbiddenWords.some(word => title.includes(word))) return false;
-
+        let filteredBooks = (data.items || []).filter(item => {
+          const v = item.volumeInfo;
+          if (!v.title) return false;
+          if (!v.authors || v.authors.length === 0) return false;
           return true;
         });
+
+        if (filteredBooks.length < 3) {
+          filteredBooks = data.items.filter(item => item.volumeInfo?.title);
+        }
+
 
         // Step 2: Score each book
         const scoredBooks = filteredBooks.map(item => {
@@ -299,13 +293,6 @@ export function MyShelf() {
               {book.ratingsCount && (
                 <span className="text-xs text-slate-500">({book.ratingsCount.toLocaleString()})</span>
               )}
-            </div>
-          )}
-
-          {/* Score indicator for search results (debug) */}
-          {isSearchResult && book.score && (
-            <div className="text-xs text-slate-400 mb-2">
-              Score: {book.score}
             </div>
           )}
 
