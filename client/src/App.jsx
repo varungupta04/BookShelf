@@ -1,11 +1,24 @@
-import { BookOpen, Bot, CalendarCheck2, Star } from 'lucide-react';
-import { FeatureCard } from './components/FeatureCard.jsx';
-import { Footer } from './components/Footer.jsx';
-import { Navbar } from './components/Navbar.jsx';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BookOpen, Bot, CalendarCheck2, Star, ArrowRight } from 'lucide-react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ToastProvider } from './contexts/ToastContext';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { FeatureCard } from './components/FeatureCard';
+import { Footer } from './components/Footer';
+import { Navbar } from './components/Navbar';
+import { SignIn } from './pages/SignIn';
+import { SignUp } from './pages/SignUp';
+import { Dashboard } from './pages/Dashboard';
+import { MyShelf } from './pages/MyShelf';
+import { HabitTracker } from './pages/HabitTracker';
+import { Reviews } from './pages/Reviews';
+import { Recommendations } from './pages/Recommendations';
 
-function App() {
+function Home() {
+  const { user } = useAuth();
+
   return (
-    <div className="min-h-screen">
+    <div>
       <Navbar />
 
       <main>
@@ -23,33 +36,57 @@ function App() {
               </h1>
               <p className="mt-5 text-pretty text-lg leading-7 text-slate-600">
                 Keep a beautiful reading list, capture thoughts as you go, build habits that stick, and
-                get smart recommendations when you’re ready for your next book.
+                get smart recommendations when you're ready for your next book.
               </p>
 
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <button className="btn-primary w-full sm:w-auto" type="button">
-                  Get started
-                </button>
-                <button className="btn-ghost w-full sm:w-auto" type="button">
-                  See features
-                </button>
+                {user ? (
+                  <>
+                    <a href="/dashboard" className="btn-primary w-full sm:w-auto flex items-center gap-2">
+                      Go to Dashboard
+                      <ArrowRight className="h-4 w-4" />
+                    </a>
+                    <a href="/shelf" className="btn-ghost w-full sm:w-auto">
+                      My Shelf
+                    </a>
+                  </>
+                ) : (
+                  <>
+                    <a href="/signin" className="btn-primary w-full sm:w-auto flex items-center gap-2">
+                      Get started
+                      <ArrowRight className="h-4 w-4" />
+                    </a>
+                    <a href="/signin" className="btn-ghost w-full sm:w-auto">
+                      Sign In
+                    </a>
+                  </>
+                )}
               </div>
 
-              <div className="mt-10 grid gap-4 sm:grid-cols-3">
-                <div className="glass rounded-2xl p-4 text-left">
-                  <div className="text-xs font-bold text-slate-600">Today</div>
-                  <div className="mt-2 text-sm font-extrabold text-slate-900">15 minutes</div>
-                  <div className="mt-1 text-sm text-slate-600">Reading streak: 6 days</div>
+              <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="glass rounded-2xl p-6 text-left hover:bg-white/70 transition-colors cursor-pointer group">
+                  <BookOpen className="h-8 w-8 text-[#1F3A2E] mb-3 group-hover:scale-110 transition-transform" />
+                  <h3 className="font-bold text-slate-900 mb-2">Reading List</h3>
+                  <p className="text-sm text-slate-600 mb-3">Track what you want to read, what you're reading, and what you've finished.</p>
+                  <span className="text-xs font-medium text-[#1F3A2E] group-hover:underline">Learn more →</span>
                 </div>
-                <div className="glass rounded-2xl p-4 text-left">
-                  <div className="text-xs font-bold text-slate-600">Up next</div>
-                  <div className="mt-2 text-sm font-extrabold text-slate-900">Pick your next vibe</div>
-                  <div className="mt-1 text-sm text-slate-600">AI recommendations, tuned to you</div>
+                <div className="glass rounded-2xl p-6 text-left hover:bg-white/70 transition-colors cursor-pointer group">
+                  <Star className="h-8 w-8 text-[#1F3A2E] mb-3 group-hover:scale-110 transition-transform" />
+                  <h3 className="font-bold text-slate-900 mb-2">Reviews</h3>
+                  <p className="text-sm text-slate-600 mb-3">Save highlights, thoughts, and ratings you'll actually want to revisit.</p>
+                  <span className="text-xs font-medium text-[#1F3A2E] group-hover:underline">Learn more →</span>
                 </div>
-                <div className="glass rounded-2xl p-4 text-left">
-                  <div className="text-xs font-bold text-slate-600">Inbox</div>
-                  <div className="mt-2 text-sm font-extrabold text-slate-900">3 new notes</div>
-                  <div className="mt-1 text-sm text-slate-600">Captured while you read</div>
+                <div className="glass rounded-2xl p-6 text-left hover:bg-white/70 transition-colors cursor-pointer group">
+                  <CalendarCheck2 className="h-8 w-8 text-[#1F3A2E] mb-3 group-hover:scale-110 transition-transform" />
+                  <h3 className="font-bold text-slate-900 mb-2">Habit Tracker</h3>
+                  <p className="text-sm text-slate-600 mb-3">Build a streak with gentle goals and a dashboard that keeps you motivated.</p>
+                  <span className="text-xs font-medium text-[#1F3A2E] group-hover:underline">Learn more →</span>
+                </div>
+                <div className="glass rounded-2xl p-6 text-left hover:bg-white/70 transition-colors cursor-pointer group">
+                  <Bot className="h-8 w-8 text-[#1F3A2E] mb-3 group-hover:scale-110 transition-transform" />
+                  <h3 className="font-bold text-slate-900 mb-2">AI Recommendations</h3>
+                  <p className="text-sm text-slate-600 mb-3">Ask for your next read by mood, genre, pacing, or themes—instantly.</p>
+                  <span className="text-xs font-medium text-[#1F3A2E] group-hover:underline">Learn more →</span>
                 </div>
               </div>
             </div>
@@ -70,12 +107,12 @@ function App() {
             <FeatureCard
               icon={BookOpen}
               title="Reading List"
-              description="Track what you want to read, what you’re reading, and what you’ve finished."
+              description="Track what you want to read, what you're reading, and what you've finished."
             />
             <FeatureCard
               icon={Star}
               title="Reviews"
-              description="Save highlights, thoughts, and ratings you’ll actually want to revisit."
+              description="Save highlights, thoughts, and ratings you'll actually want to revisit."
             />
             <FeatureCard
               icon={CalendarCheck2}
@@ -96,4 +133,59 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Router>
+      <ToastProvider>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/shelf"
+              element={
+                <ProtectedRoute>
+                  <MyShelf />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/habits"
+              element={
+                <ProtectedRoute>
+                  <HabitTracker />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reviews"
+              element={
+                <ProtectedRoute>
+                  <Reviews />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/recommendations"
+              element={
+                <ProtectedRoute>
+                  <Recommendations />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </AuthProvider>
+      </ToastProvider>
+    </Router>
+  );
+}
