@@ -66,7 +66,7 @@ app.post('/api/ai/recommendations', async (req, res) => {
     const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer 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`,
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -130,7 +130,7 @@ Format exactly like this:
     const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer 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`,
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -244,7 +244,7 @@ app.post('/api/recommendations/auth', authenticateUser, async (req, res) => {
     const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer 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`,
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
