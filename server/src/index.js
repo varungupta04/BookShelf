@@ -66,7 +66,7 @@ app.post('/api/ai/recommendations', async (req, res) => {
     const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Authorization': `Bearer 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`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -76,6 +76,10 @@ app.post('/api/ai/recommendations', async (req, res) => {
     });
     const aiResult = await aiResponse.json();
     console.log('OpenRouter response:', JSON.stringify(aiResult));
+    if (!aiResult.choices || !aiResult.choices[0]) {
+      const errorMsg = aiResult.error?.message || 'AI service unavailable';
+      return res.status(429).json({ error: errorMsg });
+    }
     const text = aiResult.choices[0].message.content;
 
     res.json({ text });
@@ -126,7 +130,7 @@ Format exactly like this:
     const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Authorization': `Bearer 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`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -136,6 +140,10 @@ Format exactly like this:
     });
     const aiResult = await aiResponse.json();
     console.log('OpenRouter response:', JSON.stringify(aiResult));
+    if (!aiResult.choices || !aiResult.choices[0]) {
+      const errorMsg = aiResult.error?.message || 'AI service unavailable';
+      return res.status(429).json({ error: errorMsg });
+    }
     const text = aiResult.choices[0].message.content;
 
     // Parse JSON response
@@ -236,7 +244,7 @@ app.post('/api/recommendations/auth', authenticateUser, async (req, res) => {
     const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Authorization': `Bearer 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`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -246,6 +254,10 @@ app.post('/api/recommendations/auth', authenticateUser, async (req, res) => {
     });
     const aiResult = await aiResponse.json();
     console.log('OpenRouter response:', JSON.stringify(aiResult));
+    if (!aiResult.choices || !aiResult.choices[0]) {
+      const errorMsg = aiResult.error?.message || 'AI service unavailable';
+      return res.status(429).json({ error: errorMsg });
+    }
     const text = aiResult.choices[0].message.content;
 
     // Parse JSON response
