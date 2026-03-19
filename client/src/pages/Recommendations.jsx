@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import { supabase } from '../lib/supabase';
 import { InnerLayout } from '../components/InnerLayout';
+import API_URL from '../config';
 
 export function Recommendations() {
   const { user } = useAuth();
@@ -84,7 +85,7 @@ export function Recommendations() {
     setMessage('');
 
     try {
-      const response = await fetch('/api/recommendations', {
+      const response = await fetch(`${API_URL}/api/recommendations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
