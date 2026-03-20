@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Link } from 'react-router-dom';
 import { BookOpen, Bot, CalendarCheck2, Star, ArrowRight } from 'lucide-react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ToastProvider } from './contexts/ToastContext';
@@ -42,23 +42,23 @@ function Home() {
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 {user ? (
                   <>
-                    <a href="/dashboard" className="btn-primary w-full sm:w-auto flex items-center gap-2">
+                    <Link to="/dashboard" className="btn-primary w-full sm:w-auto flex items-center gap-2">
                       Go to Dashboard
                       <ArrowRight className="h-4 w-4" />
-                    </a>
-                    <a href="/shelf" className="btn-ghost w-full sm:w-auto">
+                    </Link>
+                    <Link to="/shelf" className="btn-ghost w-full sm:w-auto">
                       My Shelf
-                    </a>
+                    </Link>
                   </>
                 ) : (
                   <>
-                    <a href="/signin" className="btn-primary w-full sm:w-auto flex items-center gap-2">
+                    <Link to="/signin" className="btn-primary w-full sm:w-auto flex items-center gap-2">
                       Get started
                       <ArrowRight className="h-4 w-4" />
-                    </a>
-                    <a href="/signin" className="btn-ghost w-full sm:w-auto">
+                    </Link>
+                    <Link to="/signin" className="btn-ghost w-full sm:w-auto">
                       Sign In
-                    </a>
+                    </Link>
                   </>
                 )}
               </div>
@@ -133,11 +133,11 @@ function Home() {
   );
 }
 
-export default function App() {
+function App() {
   return (
-    <Router>
-      <ToastProvider>
-        <AuthProvider>
+    <ToastProvider>
+      <AuthProvider>
+        <Router>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/signin" element={<SignIn />} />
@@ -184,8 +184,10 @@ export default function App() {
             />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </AuthProvider>
-      </ToastProvider>
-    </Router>
+        </Router>
+      </AuthProvider>
+    </ToastProvider>
   );
 }
+
+export default App;

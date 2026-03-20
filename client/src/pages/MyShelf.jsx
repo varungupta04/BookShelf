@@ -230,6 +230,52 @@ export function MyShelf() {
     const isMoving = movingBook === book.id;
     const isRemoving = removingBook === book.id;
 
+    // For the new cover-forward layout
+    if (!isSearchResult) {
+      return (
+        <div className="group relative flex-shrink-0">
+          <div className="w-32 h-44 relative">
+            {book.cover_url ? (
+              <img
+                src={book.cover_url}
+                alt={book.title}
+                className="w-full h-full object-cover rounded-lg shadow-md"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg shadow-md flex items-center justify-center">
+                <span className="text-2xl font-serif text-amber-800">
+                  {book.title?.charAt(0) || 'B'}
+                </span>
+              </div>
+            )}
+
+            {/* Hover overlay */}
+            <div className="absolute inset-0 bg-black/60 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2">
+              <button
+                onClick={() => onMove && onMove(book.id, book.status === 'want_to_read' ? 'read' : 'want_to_read')}
+                disabled={isMoving}
+                className="btn-primary text-xs px-2 py-1 w-full disabled:opacity-50"
+              >
+                {isMoving ? 'Moving...' : book.status === 'want_to_read' ? 'Mark as Read' : 'Move to Want to Read'}
+              </button>
+              <button
+                onClick={() => onRemove && onRemove(book.id)}
+                disabled={isRemoving}
+                className="btn-ghost text-xs px-2 py-1 w-full text-white bg-white/20 hover:bg-white/30 border border-white/30 disabled:opacity-50"
+              >
+                {isRemoving ? 'Removing...' : 'Remove'}
+              </button>
+            </div>
+          </div>
+          <div className="mt-2 text-center">
+            <h3 className="text-sm font-medium text-slate-900 truncate">{book.title}</h3>
+            <p className="text-xs text-slate-500 truncate">{book.author}</p>
+          </div>
+        </div>
+      );
+    }
+
+    // Original search results card (unchanged)
     // Render star rating
     const renderStars = (rating) => {
       if (!rating) return null;
@@ -461,15 +507,17 @@ export function MyShelf() {
               </div>
             </div>
           ) : (
-            <div className="grid gap-4 md:grid-cols-2">
-              {wantToRead.map((book) => (
-                <BookCard
-                  key={book.id}
-                  book={book}
-                  onMove={moveBook}
-                  onRemove={removeBook}
-                />
-              ))}
+            <div className="overflow-x-auto pb-4">
+              <div className="flex gap-4 min-w-max">
+                {wantToRead.map((book) => (
+                  <BookCard
+                    key={book.id}
+                    book={book}
+                    onMove={moveBook}
+                    onRemove={removeBook}
+                  />
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -495,15 +543,17 @@ export function MyShelf() {
               )}
             </div>
           ) : (
-            <div className="grid gap-4 md:grid-cols-2">
-              {alreadyRead.map((book) => (
-                <BookCard
-                  key={book.id}
-                  book={book}
-                  onMove={moveBook}
-                  onRemove={removeBook}
-                />
-              ))}
+            <div className="overflow-x-auto pb-4">
+              <div className="flex gap-4 min-w-max">
+                {alreadyRead.map((book) => (
+                  <BookCard
+                    key={book.id}
+                    book={book}
+                    onMove={moveBook}
+                    onRemove={removeBook}
+                  />
+                ))}
+              </div>
             </div>
           )}
         </div>

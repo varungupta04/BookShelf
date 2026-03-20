@@ -1,20 +1,27 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { BookOpen, Star, CalendarCheck2, Bot, Home, Star as StarIcon, Edit, Trash2, X, Check } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { useToast } from '../contexts/ToastContext';
 import { supabase } from '../lib/supabase';
-import { InnerLayout } from '../components/InnerLayout';
+import { Logo } from '../components/Logo';
 
 export function Reviews() {
   const { user } = useAuth();
-  const { addToast } = useToast();
+  const location = useLocation();
   const [readBooks, setReadBooks] = useState([]);
   const [reviews, setReviews] = useState({});
   const [loading, setLoading] = useState(true);
   const [editingReview, setEditingReview] = useState(null);
   const [newReview, setNewReview] = useState({ rating: 5, text: '' });
   const [submitting, setSubmitting] = useState(false);
+
+  const sidebarLinks = [
+    { icon: Home, label: 'Dashboard', href: '/dashboard' },
+    { icon: BookOpen, label: 'My Shelf', href: '/shelf' },
+    { icon: Star, label: 'Reviews', href: '/reviews' },
+    { icon: CalendarCheck2, label: 'Habit Tracker', href: '/habits' },
+    { icon: Bot, label: 'AI Recommendations', href: '/recommendations' },
+  ];
 
   useEffect(() => {
     fetchReadBooksAndReviews();
@@ -99,11 +106,9 @@ export function Reviews() {
       if (!error) {
         setNewReview({ rating: 5, text: '' });
         await fetchReadBooksAndReviews();
-        addToast(`Review added for "${book.title}"`, 'success');
       }
     } catch (error) {
       console.error('Error adding review:', error);
-      addToast('Failed to add review', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -125,11 +130,9 @@ export function Reviews() {
       if (!error) {
         setEditingReview(null);
         await fetchReadBooksAndReviews();
-        addToast('Review updated successfully', 'success');
       }
     } catch (error) {
       console.error('Error updating review:', error);
-      addToast('Failed to update review', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -146,11 +149,9 @@ export function Reviews() {
 
       if (!error) {
         await fetchReadBooksAndReviews();
-        addToast('Review deleted', 'success');
       }
     } catch (error) {
       console.error('Error deleting review:', error);
-      addToast('Failed to delete review', 'error');
     }
   };
 
@@ -294,40 +295,88 @@ export function Reviews() {
 
   if (loading) {
     return (
-      <InnerLayout title="Reviews">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1F3A2E] mx-auto mb-4"></div>
-            <p className="text-slate-600">Loading your reviews...</p>
-          </div>
+      <div className="min-h-screen bg-[#FBF7F2]">
+        <div className="flex">
+          <aside className="w-64 min-h-screen border-r border-white/60 bg-white/30 backdrop-blur-sm sticky top-0">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-8">
+                <Logo />
+                <span className="text-lg font-semibold text-slate-900">BookShelf</span>
+              </div>
+            </div>
+          </aside>
+          <main className="flex-1 p-6 flex items-center justify-center">
+            <div className="text-slate-600">Loading...</div>
+          </main>
         </div>
-      </InnerLayout>
+      </div>
     );
   }
 
   return (
-    <InnerLayout title="Reviews">
-      <div className="max-w-4xl">
-        {readBooks.length === 0 ? (
-          <div className="glass rounded-2xl p-12 text-center">
-            <Star className="h-16 w-16 text-slate-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-slate-900 mb-2">No books to review yet</h3>
-            <p className="text-slate-600 mb-6">
-              You haven't reviewed any books yet — head to My Shelf to add books and mark them as read.
-            </p>
-            <Link to="/shelf" className="btn-primary">
-              <BookOpen className="h-4 w-4" />
-              Go to My Shelf
-            </Link>
+    <div className="min-h-screen bg-[#FBF7F2]">
+      <div className="flex">
+        {/* Sidebar */}
+        <aside className="w-64 min-h-screen border-r border-white/60 bg-white/30 backdrop-blur-sm sticky top-0">
+          <div className="p-6">
+            <div className="flex items-center gap-3 mb-8">
+              <Logo />
+              <span className="text-lg font-semibold text-slate-900">BookShelf</span>
+            </div>
+            <nav className="space-y-2">
+              {sidebarLinks.map((link) => {
+                const isActive = location.pathname === link.href;
+                return (
+                  <Link
+                    key={link.label}
+                    to={link.href}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive
+                        ? 'bg-[#1F3A2E]/10 text-[#1F3A2E] font-medium'
+                        : 'text-slate-600 hover:bg-white/50 hover:text-slate-900'
+                      }`}
+                  >
+                    <link.icon className="h-4 w-4" />
+                    <span className="text-sm font-medium">{link.label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
-        ) : (
-          <div className="space-y-6">
-            {readBooks.map((book) => (
-              <BookReviewCard key={book.id} book={book} />
-            ))}
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 p-6">
+          <div className="max-w-4xl">
+            {/* Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-slate-900 mb-2">Reviews</h1>
+              <p className="text-slate-600">
+                Share your thoughts and ratings for books you've read.
+              </p>
+            </div>
+
+            {/* Reviews List */}
+            {readBooks.length === 0 ? (
+              <div className="glass rounded-2xl p-12 text-center">
+                <BookOpen className="h-16 w-16 text-slate-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-slate-900 mb-2">No books to review yet</h3>
+                <p className="text-slate-600 mb-6">
+                  Mark books as "Read" in your shelf to start reviewing them.
+                </p>
+                <Link to="/shelf" className="btn-primary">
+                  Go to My Shelf
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {readBooks.map((book) => (
+                  <BookReviewCard key={book.id} book={book} />
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </main>
       </div>
-    </InnerLayout>
+    </div>
   );
 }
