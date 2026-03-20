@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, Mail, Lock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { Logo } from '../components/Logo';
 
 export function SignUp() {
   const [email, setEmail] = useState('');
@@ -10,7 +9,7 @@ export function SignUp() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
-  
+
   const { signUp } = useAuth();
   const navigate = useNavigate();
 
@@ -21,14 +20,14 @@ export function SignUp() {
     setMessage('');
 
     const { error } = await signUp(email, password);
-    
+
     if (error) {
       setError(error.message);
     } else {
       setMessage('Check your email for the confirmation link!');
       setTimeout(() => navigate('/signin'), 3000);
     }
-    
+
     setLoading(false);
   };
 
@@ -51,7 +50,7 @@ export function SignUp() {
               {error}
             </div>
           )}
-          
+
           {message && (
             <div className="mb-4 p-3 rounded-lg bg-green-50 text-green-700 text-sm">
               {message}

@@ -4,7 +4,7 @@ import { BookOpen } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import { supabase } from '../lib/supabase';
-import { Logo } from '../components/Logo';
+import { InnerLayout } from '../components/InnerLayout';
 
 export function Dashboard() {
   const { user } = useAuth();
@@ -107,166 +107,115 @@ export function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FBF7F2]">
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-64 min-h-screen border-r border-white/60 bg-white/30 backdrop-blur-sm sticky top-0">
-          <div className="p-6">
-            <div className="flex items-center gap-3 mb-8">
-              <Logo />
-              <span className="text-lg font-semibold text-slate-900">BookShelf</span>
-            </div>
-            <nav className="space-y-2">
-              <Link
-                to="/dashboard"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#1F3A2E]/10 text-[#1F3A2E] font-medium"
-              >
-                <span className="w-4 h-4 rounded bg-[#1F3A2E]/20"></span>
-                <span className="text-sm font-medium">Dashboard</span>
-              </Link>
-              <Link
-                to="/shelf"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-white/50 hover:text-slate-900 transition-colors"
-              >
-                <BookOpen className="h-4 w-4" />
-                <span className="text-sm font-medium">My Shelf</span>
-              </Link>
-              <Link
-                to="/reviews"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-white/50 hover:text-slate-900 transition-colors"
-              >
-                <span className="w-4 h-4 rounded bg-slate-200"></span>
-                <span className="text-sm font-medium">Reviews</span>
-              </Link>
-              <Link
-                to="/habits"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-white/50 hover:text-slate-900 transition-colors"
-              >
-                <span className="w-4 h-4 rounded bg-slate-200"></span>
-                <span className="text-sm font-medium">Habit Tracker</span>
-              </Link>
-              <Link
-                to="/recommendations"
-                className="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-white/50 hover:text-slate-900 transition-colors"
-              >
-                <span className="w-4 h-4 rounded bg-slate-200"></span>
-                <span className="text-sm font-medium">AI Recommendations</span>
-              </Link>
-            </nav>
-          </div>
-        </aside>
+    <InnerLayout title="Dashboard">
+      <div className="max-w-4xl">
+        {/* Hero Section */}
+        <div className="mb-8 md:mb-12">
+          <h1 className="text-2xl md:text-3xl font-serif font-bold text-slate-900 mb-3">
+            Happy reading, {user?.email?.split('@')[0]}!
+          </h1>
+          <p className="text-base md:text-lg text-slate-600 mb-6 md:mb-8">
+            {getTimeBasedGreeting()}
+          </p>
 
-        {/* Main Content */}
-        <main className="flex-1 p-6">
-          <div className="max-w-4xl">
-            {/* Hero Section */}
-            <div className="mb-12">
-              <h1 className="text-4xl font-serif font-bold text-slate-900 mb-3">
-                Happy reading, {user?.email?.split('@')[0]}!
-              </h1>
-              <p className="text-lg text-slate-600 mb-8">
-                {getTimeBasedGreeting()}
-              </p>
-
-              {/* Recent Book or Empty State */}
-              {recentBook ? (
-                <div className="flex items-start gap-6 p-6 bg-white rounded-2xl shadow-md">
-                  {recentBook.cover_url ? (
-                    <img
-                      src={recentBook.cover_url}
-                      alt={recentBook.title}
-                      className="w-32 h-44 object-cover rounded-lg shadow-md"
-                    />
-                  ) : (
-                    <div className="w-32 h-44 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg shadow-md flex items-center justify-center">
-                      <span className="text-2xl font-serif text-amber-800">
-                        {recentBook.title?.charAt(0) || 'B'}
-                      </span>
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-slate-900 mb-2">{recentBook.title}</h3>
-                    <p className="text-slate-600 mb-4">{recentBook.author}</p>
-                    <Link
-                      to="/shelf"
-                      className="btn-primary"
-                    >
-                      Continue reading
-                    </Link>
-                  </div>
-                </div>
+          {/* Recent Book or Empty State */}
+          {recentBook ? (
+            <div className="flex flex-col md:flex-row items-start gap-4 md:gap-6 p-4 md:p-6 card">
+              {recentBook.cover_url ? (
+                <img
+                  src={recentBook.cover_url}
+                  alt={recentBook.title}
+                  className="w-24 h-32 md:w-32 md:h-44 object-cover rounded-lg shadow-md mx-auto md:mx-0"
+                />
               ) : (
-                <div className="p-8 bg-white rounded-2xl shadow-md text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <BookOpen className="h-8 w-8 text-amber-800" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-slate-900 mb-2">Add your first book to get started</h3>
-                  <Link
-                    to="/shelf"
-                    className="btn-primary"
-                  >
-                    Go to My Shelf
-                  </Link>
+                <div className="w-24 h-32 md:w-32 md:h-44 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg shadow-md flex items-center justify-center mx-auto md:mx-0">
+                  <span className="text-xl md:text-2xl font-serif text-amber-800">
+                    {recentBook.title?.charAt(0) || 'B'}
+                  </span>
                 </div>
               )}
-            </div>
-
-            {/* Stats Row */}
-            <div className="grid grid-cols-4 gap-6 mb-12">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-slate-900 mb-1">
-                  {loading ? '...' : stats.booksRead}
-                </div>
-                <div className="text-sm text-slate-500">Books Read</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-slate-900 mb-1">
-                  {loading ? '...' : stats.wantToRead}
-                </div>
-                <div className="text-sm text-slate-500">Want to Read</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-slate-900 mb-1">
-                  {loading ? '...' : stats.currentStreak}
-                </div>
-                <div className="text-sm text-slate-500">Day Streak</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-slate-900 mb-1">
-                  {loading ? '...' : stats.reviewsWritten}
-                </div>
-                <div className="text-sm text-slate-500">Reviews Written</div>
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-lg md:text-xl font-semibold text-slate-900 mb-2">{recentBook.title}</h3>
+                <p className="text-sm md:text-base text-slate-600 mb-4">{recentBook.author}</p>
+                <Link
+                  to="/shelf"
+                  className="btn-primary"
+                >
+                  Continue reading
+                </Link>
               </div>
             </div>
-
-            {/* Quick Actions */}
-            <div className="grid grid-cols-2 gap-6">
+          ) : (
+            <div className="card border-2 border-dashed border-slate-200 text-center p-6 md:p-8">
+              <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <BookOpen className="h-6 w-6 md:h-8 md:w-8 text-slate-500" />
+              </div>
+              <h3 className="text-lg md:text-xl font-semibold text-slate-900 mb-2">Your shelf is empty</h3>
+              <p className="text-sm md:text-base text-slate-600 mb-4 md:mb-6">Add some books to get started with your reading journey</p>
               <Link
-                to="/recommendations"
-                className="p-8 bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow group"
+                to="/shelf"
+                className="btn-primary"
               >
-                <h3 className="text-xl font-semibold text-slate-900 mb-2 group-hover:text-[#1F3A2E] transition-colors">
-                  Find your next book
-                </h3>
-                <p className="text-slate-600">
-                  Get personalized AI recommendations based on your taste
-                </p>
-              </Link>
-              <Link
-                to="/habits"
-                className="p-8 bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow group"
-              >
-                <h3 className="text-xl font-semibold text-slate-900 mb-2 group-hover:text-[#1F3A2E] transition-colors">
-                  Log today's reading
-                </h3>
-                <p className="text-slate-600">
-                  Track your progress and maintain your reading streak
-                </p>
+                Browse books
               </Link>
             </div>
+          )}
+        </div>
+
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12">
+          <div className="card text-center p-4 md:p-5">
+            <div className="text-2xl md:text-4xl font-bold text-slate-900 mb-1">
+              {loading ? '...' : stats.booksRead}
+            </div>
+            <div className="text-xs uppercase tracking-widest text-slate-400 font-medium">Books Read</div>
           </div>
-        </main>
+          <div className="card text-center p-4 md:p-5">
+            <div className="text-2xl md:text-4xl font-bold text-slate-900 mb-1">
+              {loading ? '...' : stats.wantToRead}
+            </div>
+            <div className="text-xs uppercase tracking-widest text-slate-400 font-medium">Want to Read</div>
+          </div>
+          <div className="card text-center p-4 md:p-5">
+            <div className="text-2xl md:text-4xl font-bold text-slate-900 mb-1">
+              {loading ? '...' : stats.currentStreak}
+            </div>
+            <div className="text-xs uppercase tracking-widest text-slate-400 font-medium">Day Streak</div>
+          </div>
+          <div className="card text-center p-4 md:p-5">
+            <div className="text-2xl md:text-4xl font-bold text-slate-900 mb-1">
+              {loading ? '...' : stats.reviewsWritten}
+            </div>
+            <div className="text-xs uppercase tracking-widest text-slate-400 font-medium">Reviews Written</div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="flex flex-col md:grid md:grid-cols-2 gap-4 md:gap-6">
+          <Link
+            to="/recommendations"
+            className="card border-l-4 border-amber-400 cursor-pointer hover:shadow-md group p-4 md:p-6"
+          >
+            <h3 className="text-lg md:text-xl font-semibold text-slate-900 mb-2 group-hover:text-[#2D4A38] transition-colors">
+              Find your next book
+            </h3>
+            <p className="text-sm text-slate-600 leading-relaxed">
+              Get personalized AI recommendations based on your taste
+            </p>
+          </Link>
+          <Link
+            to="/habits"
+            className="card border-l-4 border-green-500 cursor-pointer hover:shadow-md group p-4 md:p-6"
+          >
+            <h3 className="text-lg md:text-xl font-semibold text-slate-900 mb-2 group-hover:text-[#2D4A38] transition-colors">
+              Log today's reading
+            </h3>
+            <p className="text-sm text-slate-600 leading-relaxed">
+              Track your progress and maintain your reading streak
+            </p>
+          </Link>
+        </div>
       </div>
-    </div>
+    </InnerLayout>
   );
 }

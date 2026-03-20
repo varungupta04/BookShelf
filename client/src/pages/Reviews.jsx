@@ -1,27 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { BookOpen, Star, CalendarCheck2, Bot, Home, Star as StarIcon, Edit, Trash2, X, Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Star as StarIcon, Edit, Trash2, X, Check } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { Logo } from '../components/Logo';
+import { InnerLayout } from '../components/InnerLayout';
 
 export function Reviews() {
   const { user } = useAuth();
-  const location = useLocation();
   const [readBooks, setReadBooks] = useState([]);
   const [reviews, setReviews] = useState({});
   const [loading, setLoading] = useState(true);
   const [editingReview, setEditingReview] = useState(null);
   const [newReview, setNewReview] = useState({ rating: 5, text: '' });
   const [submitting, setSubmitting] = useState(false);
-
-  const sidebarLinks = [
-    { icon: Home, label: 'Dashboard', href: '/dashboard' },
-    { icon: BookOpen, label: 'My Shelf', href: '/shelf' },
-    { icon: Star, label: 'Reviews', href: '/reviews' },
-    { icon: CalendarCheck2, label: 'Habit Tracker', href: '/habits' },
-    { icon: Bot, label: 'AI Recommendations', href: '/recommendations' },
-  ];
 
   useEffect(() => {
     fetchReadBooksAndReviews();
@@ -76,8 +67,8 @@ export function Reviews() {
           >
             <StarIcon
               className={`h-5 w-5 ${star <= rating
-                  ? 'fill-yellow-400 text-yellow-400'
-                  : 'fill-transparent text-slate-300'
+                ? 'fill-yellow-400 text-yellow-400'
+                : 'fill-transparent text-slate-300'
                 }`}
             />
           </button>
@@ -297,12 +288,8 @@ export function Reviews() {
     return (
       <div className="min-h-screen bg-[#FBF7F2]">
         <div className="flex">
-          <aside className="w-64 min-h-screen border-r border-white/60 bg-white/30 backdrop-blur-sm sticky top-0">
+          <aside className="w-56 min-h-screen bg-[#1C2B22] fixed left-0 top-14">
             <div className="p-6">
-              <div className="flex items-center gap-3 mb-8">
-                <Logo />
-                <span className="text-lg font-semibold text-slate-900">BookShelf</span>
-              </div>
             </div>
           </aside>
           <main className="flex-1 p-6 flex items-center justify-center">
@@ -314,69 +301,36 @@ export function Reviews() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FBF7F2]">
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-64 min-h-screen border-r border-white/60 bg-white/30 backdrop-blur-sm sticky top-0">
-          <div className="p-6">
-            <div className="flex items-center gap-3 mb-8">
-              <Logo />
-              <span className="text-lg font-semibold text-slate-900">BookShelf</span>
-            </div>
-            <nav className="space-y-2">
-              {sidebarLinks.map((link) => {
-                const isActive = location.pathname === link.href;
-                return (
-                  <Link
-                    key={link.label}
-                    to={link.href}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive
-                        ? 'bg-[#1F3A2E]/10 text-[#1F3A2E] font-medium'
-                        : 'text-slate-600 hover:bg-white/50 hover:text-slate-900'
-                      }`}
-                  >
-                    <link.icon className="h-4 w-4" />
-                    <span className="text-sm font-medium">{link.label}</span>
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        </aside>
+    <InnerLayout title="Reviews">
+      <div className="max-w-4xl">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Reviews</h1>
+          <p className="text-slate-600">
+            Share your thoughts and ratings for books you've read.
+          </p>
+        </div>
 
-        {/* Main Content */}
-        <main className="flex-1 p-6">
-          <div className="max-w-4xl">
-            {/* Header */}
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">Reviews</h1>
-              <p className="text-slate-600">
-                Share your thoughts and ratings for books you've read.
-              </p>
-            </div>
-
-            {/* Reviews List */}
-            {readBooks.length === 0 ? (
-              <div className="glass rounded-2xl p-12 text-center">
-                <BookOpen className="h-16 w-16 text-slate-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-slate-900 mb-2">No books to review yet</h3>
-                <p className="text-slate-600 mb-6">
-                  Mark books as "Read" in your shelf to start reviewing them.
-                </p>
-                <Link to="/shelf" className="btn-primary">
-                  Go to My Shelf
-                </Link>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {readBooks.map((book) => (
-                  <BookReviewCard key={book.id} book={book} />
-                ))}
-              </div>
-            )}
+        {/* Reviews List */}
+        {readBooks.length === 0 ? (
+          <div className="card text-center">
+            <BookOpen className="h-16 w-16 text-slate-400 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-slate-900 mb-2">No books to review yet</h3>
+            <p className="text-slate-600 mb-6">
+              Mark books as "Read" in your shelf to start reviewing them.
+            </p>
+            <Link to="/shelf" className="btn-primary">
+              Go to My Shelf
+            </Link>
           </div>
-        </main>
+        ) : (
+          <div className="space-y-6">
+            {readBooks.map((book) => (
+              <BookReviewCard key={book.id} book={book} />
+            ))}
+          </div>
+        )}
       </div>
-    </div>
+    </InnerLayout>
   );
 }

@@ -230,7 +230,7 @@ export function MyShelf() {
     const isMoving = movingBook === book.id;
     const isRemoving = removingBook === book.id;
 
-    // For the new cover-forward layout
+    // For new cover-forward layout
     if (!isSearchResult) {
       return (
         <div className="group relative flex-shrink-0">
@@ -239,10 +239,10 @@ export function MyShelf() {
               <img
                 src={book.cover_url}
                 alt={book.title}
-                className="w-full h-full object-cover rounded-lg shadow-md"
+                className="w-full h-full object-cover rounded-xl shadow-sm border border-slate-100"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg shadow-md flex items-center justify-center">
+              <div className="w-full h-full bg-gradient-to-br from-amber-100 to-amber-200 rounded-xl shadow-sm border border-slate-100 flex items-center justify-center">
                 <span className="text-2xl font-serif text-amber-800">
                   {book.title?.charAt(0) || 'B'}
                 </span>
@@ -250,7 +250,7 @@ export function MyShelf() {
             )}
 
             {/* Hover overlay */}
-            <div className="absolute inset-0 bg-black/60 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2">
+            <div className="absolute inset-0 bg-black/60 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2">
               <button
                 onClick={() => onMove && onMove(book.id, book.status === 'want_to_read' ? 'read' : 'want_to_read')}
                 disabled={isMoving}
@@ -261,13 +261,13 @@ export function MyShelf() {
               <button
                 onClick={() => onRemove && onRemove(book.id)}
                 disabled={isRemoving}
-                className="btn-ghost text-xs px-2 py-1 w-full text-white bg-white/20 hover:bg-white/30 border border-white/30 disabled:opacity-50"
+                className="bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs px-2 py-1 w-full rounded-lg disabled:opacity-50"
               >
                 {isRemoving ? 'Removing...' : 'Remove'}
               </button>
             </div>
           </div>
-          <div className="mt-2 text-center">
+          <div className="mt-2 text-center w-32">
             <h3 className="text-sm font-medium text-slate-900 truncate">{book.title}</h3>
             <p className="text-xs text-slate-500 truncate">{book.author}</p>
           </div>
@@ -303,8 +303,7 @@ export function MyShelf() {
     };
 
     return (
-      <div className={`glass rounded-xl p-4 flex gap-4 transition-all duration-200 ${isSearchResult ? 'hover:bg-white/70 hover:shadow-lg border-2 border-dashed border-slate-300' : 'hover:bg-white/50'
-        }`}>
+      <div className="card flex gap-4 transition-all duration-200">
         {book.cover_url ? (
           <img
             src={book.cover_url}
@@ -312,7 +311,7 @@ export function MyShelf() {
             className="w-16 h-20 object-cover rounded-lg shadow-sm flex-shrink-0"
           />
         ) : (
-          <div className="w-16 h-20 bg-gradient-to-br from-slate-200 to-slate-300 rounded-lg flex items-center justify-center shadow-sm flex-shrink-0">
+          <div className="w-16 h-20 bg-gradient-to-br from-slate-200 to-slate-300 rounded-lg shadow-sm flex-shrink-0 flex items-center justify-center">
             <BookOpen className="h-6 w-6 text-slate-500" />
           </div>
         )}
@@ -436,15 +435,15 @@ export function MyShelf() {
     <InnerLayout title="My Shelf">
       <div className="max-w-4xl mx-auto">
         {/* Search Section */}
-        <div className="glass rounded-2xl p-6 mb-8 border border-white/60">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+        <div className="mb-8">
+          <div className="relative max-w-md mx-auto">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search for books (min. 3 characters)..."
-              className="w-full pl-10 pr-3 py-3 border border-white/60 rounded-lg bg-white/50 focus:outline-none focus:ring-2 focus:ring-[#1F3A2E]/30 focus:border-transparent"
+              className="w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl shadow-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#2D4A38]/30 focus:border-transparent"
               autoFocus={wantToRead.length === 0 && alreadyRead.length === 0}
             />
           </div>
@@ -490,14 +489,17 @@ export function MyShelf() {
 
         {/* Want to Read Section */}
         <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <BookOpen className="h-5 w-5 text-[#1F3A2E]" />
-            <h2 className="text-xl font-semibold text-slate-900">Want to Read</h2>
-            <span className="badge">{wantToRead.length}</span>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-[#2D4A38]" />
+              <h2 className="text-lg font-semibold text-slate-900">Want to Read</h2>
+              <span className="bg-slate-100 text-slate-600 rounded-full px-2 py-0.5 text-xs font-medium">{wantToRead.length}</span>
+            </div>
+            <div className="h-px bg-slate-200 flex-1"></div>
           </div>
 
           {wantToRead.length === 0 ? (
-            <div className="glass rounded-2xl p-8 text-center border border-white/60">
+            <div className="card text-center">
               <BookOpen className="h-12 w-12 text-slate-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-slate-900 mb-2">Your "Want to Read" list is empty</h3>
               <p className="text-slate-600 mb-6">Start building your reading list by searching for books above!</p>
@@ -524,14 +526,17 @@ export function MyShelf() {
 
         {/* Already Read Section */}
         <div>
-          <div className="flex items-center gap-2 mb-4">
-            <BookMarked className="h-5 w-5 text-[#1F3A2E]" />
-            <h2 className="text-xl font-semibold text-slate-900">Already Read</h2>
-            <span className="badge">{alreadyRead.length}</span>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <BookMarked className="h-5 w-5 text-[#2D4A38]" />
+              <h2 className="text-lg font-semibold text-slate-900">Already Read</h2>
+              <span className="bg-slate-100 text-slate-600 rounded-full px-2 py-0.5 text-xs font-medium">{alreadyRead.length}</span>
+            </div>
+            <div className="h-px bg-slate-200 flex-1"></div>
           </div>
 
           {alreadyRead.length === 0 ? (
-            <div className="glass rounded-2xl p-8 text-center border border-white/60">
+            <div className="card text-center">
               <BookMarked className="h-12 w-12 text-slate-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-slate-900 mb-2">No books marked as read yet</h3>
               <p className="text-slate-600 mb-6">Move books from "Want to Read" when you finish them!</p>

@@ -22,9 +22,8 @@
     @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
   }
 
-  .glass {
-    @apply bg-white/60 backdrop-blur-md border border-white/60;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7), 0 20px 40px rgba(0, 0, 0, 0.1);
+  .card {
+    @apply bg-white rounded-2xl p-6 shadow-sm border border-slate-100 transition-shadow duration-200 hover:shadow-md;
   }
 
   .btn {
@@ -32,7 +31,7 @@
   }
 
   .btn-primary {
-    @apply btn bg-[#1F3A2E] text-white shadow-sm hover:bg-[#182E25] focus:outline-none focus:ring-2 focus:ring-[#1F3A2E]/30;
+    @apply btn bg-[#2D4A38] text-white shadow-sm hover:bg-[#1C3329] focus:outline-none focus:ring-2 focus:ring-[#2D4A38]/30;
   }
 
   .btn-lg {
