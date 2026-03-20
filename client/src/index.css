@@ -26,6 +26,308 @@
     @apply bg-white rounded-2xl p-6 shadow-sm border border-slate-100 transition-shadow duration-200 hover:shadow-md;
   }
 
+  .badge {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+  }
+
+  /* ============================================
+   BOOKSHELF REDESIGN — ANIMATIONS & DEPTH
+   ============================================ */
+
+  /* Page entrance animation */
+  @keyframes pageEnter {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Pulsing ring for today */
+  @keyframes pulseRing {
+    0% {
+      box-shadow: 0 0 0 0 rgba(45, 74, 56, 0.4);
+    }
+
+    70% {
+      box-shadow: 0 0 0 8px rgba(45, 74, 56, 0);
+    }
+
+    100% {
+      box-shadow: 0 0 0 0 rgba(45, 74, 56, 0);
+    }
+  }
+
+  /* Shimmer sweep for buttons */
+  @keyframes shimmer {
+    from {
+      transform: translateX(-100%);
+    }
+
+    to {
+      transform: translateX(200%);
+    }
+  }
+
+  /* Logo pulse on load */
+  @keyframes logoPulse {
+    0% {
+      transform: scale(1);
+    }
+
+    50% {
+      transform: scale(1.06);
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  /* Staggered card entrance */
+  @keyframes cardEnter {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Active sidebar border grow */
+  @keyframes borderGrow {
+    from {
+      height: 0%;
+    }
+
+    to {
+      height: 100%;
+    }
+  }
+
+  /* ============================================
+   PAGE WRAPPER
+   ============================================ */
+  main {
+    animation: pageEnter 0.3s ease-out both;
+  }
+
+  /* ============================================
+   CARD DEPTH SYSTEM
+   ============================================ */
+  .card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.04) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-radius: 1rem !important;
+  }
+
+  .card:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+    transform: translateY(-2px);
+  }
+
+  .card:active {
+    transform: translateY(0px) scale(0.99);
+  }
+
+  .glass {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05), 0 4px 16px rgba(0, 0, 0, 0.03);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ============================================
+   BUTTON SYSTEM
+   ============================================ */
+  .btn-primary {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  .btn-primary:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px rgba(45, 74, 56, 0.3);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.98);
+  }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: none;
+  }
+
+  .btn-primary:hover::after {
+    animation: shimmer 0.6s ease forwards;
+  }
+
+  .btn-ghost {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  .btn-ghost:hover {
+    transform: scale(1.02);
+  }
+
+  .btn-ghost:active {
+    transform: scale(0.98);
+  }
+
+  /* ============================================
+   SIDEBAR NAV LINKS
+   ============================================ */
+  aside nav a {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  aside nav a:hover span {
+    transform: translateX(4px);
+    display: inline-block;
+    transition: transform 0.2s ease;
+  }
+
+  aside nav a.active-link {
+    border-left: 3px solid #5C8C6A;
+  }
+
+  /* ============================================
+   3D BOOK COVER EFFECT
+   ============================================ */
+  .book-cover-wrapper {
+    perspective: 1000px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .book-cover-wrapper img,
+  .book-cover-wrapper>div {
+    box-shadow: -4px 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: left center;
+  }
+
+  .book-cover-wrapper:hover img,
+  .book-cover-wrapper:hover>div {
+    transform: rotate3d(0, 1, 0, -8deg);
+    box-shadow: -8px 8px 20px rgba(0, 0, 0, 0.25);
+  }
+
+  /* ============================================
+   HABIT CALENDAR CELLS
+   ============================================ */
+  .calendar-logged {
+    transition: all 0.2s ease;
+    cursor: default;
+  }
+
+  .calendar-logged:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 12px rgba(45, 74, 56, 0.4);
+  }
+
+  .calendar-today {
+    animation: pulseRing 2s ease infinite;
+  }
+
+  /* ============================================
+   RECOMMENDATION MOOD PILLS
+   ============================================ */
+  .mood-pill {
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: 1.5px solid #d1d5db;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    background: transparent;
+    color: #475569;
+  }
+
+  .mood-pill:hover {
+    border-color: #2D4A38;
+    color: #2D4A38;
+    transform: scale(1.03);
+  }
+
+  .mood-pill.selected {
+    background: #2D4A38;
+    color: white;
+    border-color: #2D4A38;
+    transform: scale(1.05);
+  }
+
+  /* ============================================
+   STAGGERED CARD ENTRANCE
+   ============================================ */
+  .rec-card-0 {
+    animation: cardEnter 0.4s ease both 0ms;
+  }
+
+  .rec-card-1 {
+    animation: cardEnter 0.4s ease both 100ms;
+  }
+
+  .rec-card-2 {
+    animation: cardEnter 0.4s ease both 200ms;
+  }
+
+  .rec-card-3 {
+    animation: cardEnter 0.4s ease both 300ms;
+  }
+
+  .rec-card-4 {
+    animation: cardEnter 0.4s ease both 400ms;
+  }
+
+  /* ============================================
+   LOGO PULSE
+   ============================================ */
+  .logo-pulse {
+    animation: logoPulse 0.8s ease both;
+  }
+
+  /* ============================================
+   TYPOGRAPHY UPGRADES
+   ============================================ */
+  h1.page-title {
+    font-family: Georgia, serif;
+    font-weight: 700;
+    color: #1a2e22;
+    letter-spacing: -0.02em;
+  }
+
+  .section-label {
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.7rem;
+    color: #94a3b8;
+    font-weight: 600;
+  }
+
+  /* ============================================
+   INPUT FOCUS GLOW
+   ============================================ */
+  input:focus,
+  textarea:focus {
+    box-shadow: 0 0 0 3px rgba(45, 74, 56, 0.12) !important;
+    transition: all 0.2s ease;
+  }
+
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition;
   }

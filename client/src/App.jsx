@@ -13,6 +13,7 @@ import { MyShelf } from './pages/MyShelf';
 import { HabitTracker } from './pages/HabitTracker';
 import { Reviews } from './pages/Reviews';
 import { Recommendations } from './pages/Recommendations';
+import { Friends } from './pages/Friends';
 
 function Home() {
   const { user } = useAuth();
@@ -179,6 +180,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Recommendations />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/friends"
+              element={
+                <ProtectedRoute>
+                  <Friends />
                 </ProtectedRoute>
               }
             />

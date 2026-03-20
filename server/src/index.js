@@ -294,6 +294,192 @@ app.get('/api/supabase/ping', async (_req, res) => {
   res.json({ ok: true, now });
 });
 
+// Search users by email/username
+app.get('/api/friends/search', authenticateUser, async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q) {
+      return res.status(400).json({ error: 'Query parameter q is required' });
+    }
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, email, username')
+      .or(`email.ilike.%${q}%,username.ilike.%${q}%`)
+      .neq('id', req.user.id)
+      .limit(10);
+
+    if (error) {
+      console.error('Search users error:', error);
+      return res.status(500).json({ error: 'Failed to search users' });
+    }
+
+    res.json({ users: data || [] });
+  } catch (error) {
+    console.error('Search users error:', error);
+    res.status(500).json({ error: 'Failed to search users' });
+  }
+});
+
+// Send friend request
+app.post('/api/friends/request', authenticateUser, async (req, res) => {
+  try {
+    const { receiver_id } = req.body;
+    if (!receiver_id) {
+      return res.status(400).json({ error: 'receiver_id is required' });
+    }
+
+    if (receiver_id === req.user.id) {
+      return res.status(400).json({ error: 'Cannot send friend request to yourself' });
+    }
+
+    const { data, error } = await supabase
+      .from('friend_requests')
+      .insert({
+        sender_id: req.user.id,
+        receiver_id,
+        status: 'pending'
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Send friend request error:', error);
+      if (error.code === '23505') {
+        return res.status(400).json({ error: 'Friend request already exists' });
+      }
+      return res.status(500).json({ error: 'Failed to send friend request' });
+    }
+
+    res.json({ request: data });
+  } catch (error) {
+    console.error('Send friend request error:', error);
+    res.status(500).json({ error: 'Failed to send friend request' });
+  }
+});
+
+// Get pending incoming requests
+app.get('/api/friends/requests/incoming', authenticateUser, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('friend_requests')
+      .select(`
+        id,
+        sender_id,
+        created_at,
+        profiles!friend_requests_sender_id_fkey (
+          email,
+          username
+        )
+      `)
+      .eq('receiver_id', req.user.id)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Get incoming requests error:', error);
+      return res.status(500).json({ error: 'Failed to get incoming requests' });
+    }
+
+    res.json({ requests: data || [] });
+  } catch (error) {
+    console.error('Get incoming requests error:', error);
+    res.status(500).json({ error: 'Failed to get incoming requests' });
+  }
+});
+
+// Accept or decline request
+app.put('/api/friends/request/:id', authenticateUser, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!['accepted', 'declined'].includes(status)) {
+      return res.status(400).json({ error: 'Status must be accepted or declined' });
+    }
+
+    const { data, error } = await supabase
+      .from('friend_requests')
+      .update({ status })
+      .eq('id', id)
+      .eq('receiver_id', req.user.id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Update friend request error:', error);
+      return res.status(500).json({ error: 'Failed to update friend request' });
+    }
+
+    if (!data) {
+      return res.status(404).json({ error: 'Friend request not found' });
+    }
+
+    res.json({ request: data });
+  } catch (error) {
+    console.error('Update friend request error:', error);
+    res.status(500).json({ error: 'Failed to update friend request' });
+  }
+});
+
+// Get all accepted friends
+app.get('/api/friends', authenticateUser, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('friend_requests')
+      .select(`
+        id,
+        sender_id,
+        receiver_id,
+        created_at,
+        profiles!friend_requests_sender_id_fkey (
+          id,
+          email,
+          username
+        ),
+        profiles!friend_requests_receiver_id_fkey (
+          id,
+          email,
+          username
+        )
+      `)
+      .or(`sender_id.eq.${req.user.id},receiver_id.eq.${req.user.id}`)
+      .eq('status', 'accepted')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Get friends error:', error);
+      return res.status(500).json({ error: 'Failed to get friends' });
+    }
+
+    // Extract friend info from either sender or receiver (whichever is not the current user)
+    const friends = (data || []).map(request => {
+      if (request.sender_id === req.user.id) {
+        return {
+          id: request.profiles.friend_requests_receiver_id_fkey.id,
+          email: request.profiles.friend_requests_receiver_id_fkey.email,
+          username: request.profiles.friend_requests_receiver_id_fkey.username,
+          friendship_id: request.id,
+          created_at: request.created_at
+        };
+      } else {
+        return {
+          id: request.profiles.friend_requests_sender_id_fkey.id,
+          email: request.profiles.friend_requests_sender_id_fkey.email,
+          username: request.profiles.friend_requests_sender_id_fkey.username,
+          friendship_id: request.id,
+          created_at: request.created_at
+        };
+      }
+    });
+
+    res.json({ friends });
+  } catch (error) {
+    console.error('Get friends error:', error);
+    res.status(500).json({ error: 'Failed to get friends' });
+  }
+});
+
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`BookShelf server running on http://localhost:${PORT}`);
