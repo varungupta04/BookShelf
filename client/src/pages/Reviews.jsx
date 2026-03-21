@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Star as StarIcon, Edit, Trash2, X, Check, BookOpen } from 'lucide-react';
+import { Star, Star as StarIcon, Edit, Trash2, X, Check, BookOpen } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { InnerLayout } from '../components/InnerLayout';
