@@ -3,7 +3,7 @@
 
 ---
 
-I'm an avid reader. Always have been. But somewhere between juggling three different apps, losing track of recommendations, and spending 20 minutes deciding what to read next — the joy was getting lost in the admin.
+I'm an avid reader. Always have been. But somewhere between juggling three different apps, losing track of recommendations, and spending 20 minutes deciding what to read next, the joy was getting lost in the admin.
 
 Goodreads felt like a social network I didn't ask for. Notion trackers felt like homework. And none of them could answer the one question I always had: *"What should I read next?"*
 
@@ -22,22 +22,24 @@ Two simple lists — Want to Read and Already Read. No noise, no social pressure
 **AI Book Discovery**
 The main event. Tell AI your mood, your favourite authors, how long you want the book to be, and what genre you're feeling. Get 5 handpicked recommendations in seconds. Add any of them to your shelf instantly.
 
+**Daily Reading Habit Tracker**
+Build your reading streak with a 30-day calendar view. See your consistency at a glance and keep the momentum going.
+
+**Reviews & Star Ratings**
+Rate every book you finish and write a review while it's still fresh. Your shelf, your opinions.
+
+**Reading Progress Tracker**
+Log your progress by pages or percentage. Always know exactly where you left off and how far you've come.
+
+**Book Clubs & Shared Shelves**
+Read together. Share a shelf with friends, see what they're reading, and discover books through people whose taste you actually trust.
+
 **Auth**
 Secure sign up and sign in. Your shelf is yours alone.
 
 ---
 
-## Coming soon
-
-- Daily reading habit tracker with streaks and a 30 day calendar
-- Reviews and star ratings for every book you finish
-- Reading progress tracker (pages / percentage done)
-- Book clubs and shared shelves
-
----
-
 ## Try it live
-
 [book-shelf-client-ruby.vercel.app](https://book-shelf-client-ruby.vercel.app)
 
 ---
@@ -54,6 +56,7 @@ Secure sign up and sign in. Your shelf is yours alone.
 | Hosting | Railway (backend) + Vercel (frontend) |
 
 ## Running locally
+
 ```bash
 # 1. Clone
 git clone https://github.com/varungupta04/BookShelf.git
@@ -77,10 +80,11 @@ VITE_API_URL=your_railway_backend_url
 
 # 4. Run
 npm run dev
+
 # Frontend → http://localhost:5173
 # Backend  → http://localhost:3001
 ```
 
 ---
 
-*Built as an MVP in a single day. Feedback, issues, and feature requests welcome.*
+*Feedback, issues, and feature requests welcome.*
